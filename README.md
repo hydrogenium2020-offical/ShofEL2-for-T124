@@ -1,115 +1,46 @@
-# ShofEL2
+# ShofEL2 for T124
 
-A misleadingly-named Tegra X1 Boot ROM exploit and Nintendo Switch Linux loader.
+This is an atempt to run the Fusee Gelee / ShofEL2 exploit on the T124 and maybe get full control of my Shield Tablet.
 
-See the accompanying blog post: https://fail0verflow.com/blog/2018/shofel2/
+Mostly of my code is based on the original ShofEL2 code and Katherine Temkin research, so I cannot take that much credit for it.
+
+At this moment it doesn't work, since the run stack smashing step doesn't look to do its job.
+
+The USB stack allows to send poisonious GetStatus and it replies to those ones with lenghts smaler than 1000 bytes,
+however it doesn't look to write out of the USB buffer (or maybe the run stack is not located after the USB buffer).
+
+See the original fail0verflow blog post: https://fail0verflow.com/blog/2018/shofel2/
+See additional info ati the original Katherine Temkin github: https://github.com/Qyriad/fusee-launcher/blob/master/report/fusee_gelee.md
 
 ## Obligatory disclaimer
 
-If your Switch catches fire or turns into an Ouya, it's not our fault. It's
-stupidly easy to blow up embedded platforms like this with bad software (e.g.
-all voltages are software-controlled). We already caused temporary damage to one
-LCD panel with bad power sequencing code. Seriously, do not complain if
-something goes wrong.
-
-On the other hand, this exploit probably works on the Ouya...
+This code is a non functional alpha, use under your own resposability, it could made your house on fire or worse....
 
 ## Usage
 
-You need arm-linux-gnueabi and aarch64-linux-gnu toolchains.
+You need arm-linux-gnueabi
 [Linaro](https://releases.linaro.org/components/toolchain/binaries/latest-7/)
-have working toolchains.
 
-Clone everything:
-
-    $ git clone https://github.com/fail0verflow/shofel2.git
-    $ git clone --recursive https://github.com/fail0verflow/switch-coreboot.git coreboot
-    $ git clone https://github.com/fail0verflow/switch-u-boot.git u-boot
-    $ git clone https://github.com/fail0verflow/switch-linux.git linux
-    $ git clone https://github.com/boundarydevices/imx_usb_loader.git
-
-Build the cbfs loader:
+Build the reset_example:
 
     $ cd shofel2/exploit
     $ make
-
-Build u-boot:
-
-    $ cd u-boot
-    $ export CROSS_COMPILE=aarch64-linux-gnu-
-    $ make nintendo-switch_defconfig
-    $ make
-
-Build coreboot:
-
-    $ cd coreboot
-    $ make nintendo_switch_defconfig
-    $ make iasl
-    $ make
-
-Build imx_usb_loader:
-
-    $ cd imx_usb_loader
-    $ make
-
-Build Linux:
-
-    $ cd linux
-    $ export ARCH=arm64
-    $ export CROSS_COMPILE=aarch64-linux-gnu-
-    $ make nintendo-switch_defconfig
-    $ make
-If you get an error that looks like:
-```
-make[1]: *** No rule to make target '/lib/firmware/brcm/brcmfmac4356-pcie.txt', needed by 'firmware/brcm/brcmfmac4356-pcie.txt.gen.o'.  Stop.
-```
-download [this](https://chromium.googlesource.com/chromiumos/third_party/linux-firmware/+/f151f016b4fe656399f199e28cabf8d658bcb52b/brcm/brcmfmac4356-pcie.txt?format=TEXT), base64 decode it and put it on your host filesystem as `/lib/firmware/brcm/brcmfmac4356-pcie.txt`:
-
-```
-$ base64 -d brcmfmac4356-pcie.txt > brcmfmac4356-pcie-decoded.txt
-$ cp brcmfmac4356-pcie-decoded.txt /lib/firmware/brcm/brcmfmac4356-pcie.txt # This command needs root.
-```
-
-
 
 Run the exploit
 
     $ cd shofel2/exploit
-    $ ./shofel2.py cbfs.bin ../../coreboot/build/coreboot.rom # This command needs root or permissions to access usb devices.
+    $ python3 ./shofel2.py
 
-Build the u-boot script and run it
+## Interesting ideas
 
-    $ cd shofel2/usb_loader
-    $ ../../u-boot/tools/mkimage -A arm64 -T script -C none -n "boot.scr" -d switch.scr switch.scr.img
-    $ ../../imx_usb_loader/imx_usb -c . # This command needs root or permissions to access usb devices.
+* RCM loads the payload to 0x4000E000 (described on tegrarcm source code).
+* RCM CMD size restrictions are different to X1.	
+* RCM CMD format is also sligitly different.
+* A payload can still be loaded using the same technic as the one used by the original shofEL2, since no validation is performed till the whole payload is received.
+* Even if the specs says that the JTAG is enabled by default, bootrom code disasbles it while is runnig (not as dumb as expected :D).
+* RCM is run on an ARM7TDMI. This CPU is supported by Segger J-LINK EDU and I could run the reset_example without any problem with it (see GDB init file).
+* TBC: Following the original shofEL2 code (sanity_check function), I would say that USB buffers are located at 0x40004000 and 0x40008000.
+* TBC: I would say that memcpy is limiting the amount of data to 0x1000 or the destination adress is after the stack, wharever it is, the stack doesn't look
+to get smashed (even using the biggest GetStatus size 0xFFFF), because the T124 keep repliying non poisonous GetStatus and allowing you to complete sedding the RCM CMD payload.
+* Other vectors could be explored but at this time, I think that I am on a dead end.
 
-## Root filesystems
-If all went well, you should have some penguins. You should probably put a root
-filesystem on your SD card. Userspace libraries and other patches coming soon.
-
-Here is an example on how to get Arch up and running.
-* make a new MBR partition table on a fresh sdcard
-* make two partitions on it
-* format the second one as ext4
-* mount that partition somewhere
-* download [Arch Linux ARM rootfs](http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz)
-* untar it into your partition as root.
-
-Here are some example commands you should not just copy paste into your terminal.
-```bash
-$ mkdir -p /tmp/sdcard
-$ mount -t ext4 /dev/mmcblk0p2 /tmp/sdcard
-$ wget http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
-$ sudo tar -xf ArchLinuxARM-aarch64-latest.tar.gz -C /tmp/sdcard
-$ sudo umount /dev/mmcblk0p2
-```
-
-**You will most likely need a 1.8V serial cable connected to the right hand side
-Joy-Con port to do anything useful with this at this point**. Please do not bug
-us with questions about how to get this to run if you do not have a means to
-debug things yourself. This is not ready for end users. If you really want to
-try configuring your Linux image standalone to boot with WiFi or X support
-to get something done without a serial console, you're on your own and you get
-to suffer through the pain all by yourself. Hint: WiFi is broken on the first
-boot, you need to reboot on the first Linux launch (which puts you back into
-RCM mode), and then run the exploit again. Patches welcome.
