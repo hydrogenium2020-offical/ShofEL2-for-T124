@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
+#include <errno.h>
 #include <ctype.h>
 
 #include <sys/ioctl.h>
@@ -30,7 +31,7 @@
 int usb_open_by_vid_pid( uint16_t vid, uint16_t pid, uint8_t wait );
 int usb_close( int usb );
 int usb_send_bulk_txn( int usb, uint32_t ep, uint32_t len, void *data );
-int usb_send_control_txn( int usb, uint8_t bRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, uint16_t len, uint8_t *data );
+int usb_send_control_txn( int usb, uint8_t bRequestType, uint8_t bRequest, uint16_t wValue, uint16_t wIndex, uint16_t len, uint8_t *data, int32_t timeout );
 
 #endif
 
