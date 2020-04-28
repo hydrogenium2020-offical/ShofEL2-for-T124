@@ -1,6 +1,6 @@
 CFLAGS := -Wall -Werror -I include -MMD
 
-BIN_FILES = reset_example.bin jtag_example.bin intermezzo.bin reset_long_bin_example.bin irom_dumper.bin
+BIN_FILES = reset_example.bin jtag_example.bin intermezzo.bin reset_long_bin_example.bin boot_bct.bin mem_dumper_usb_server.bin
 
 all: shofel2_t124 $(BIN_FILES)
 
@@ -57,7 +57,10 @@ build/reset_long_bin_example.elf: build/obj_arm/reset_long_bin_example.o
 build/jtag_example.elf: build/obj_arm/jtag_example.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
-build/irom_dumper.elf: build/obj_arm/irom_dumper.o
+build/boot_bct.elf: build/obj_arm/boot_bct.o
+	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
+
+build/mem_dumper_usb_server.elf: build/obj_arm/mem_dumper_usb_server.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 build/intermezzo.elf: build/obj_arm/intermezzo.o

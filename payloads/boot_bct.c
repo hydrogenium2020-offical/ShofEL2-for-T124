@@ -1,7 +1,7 @@
 #include "types.h"
 #include "t124.h"
 
-typedef void (*do_normal_boot_t)( void );
+typedef void (*do_bct_boot_t)( void );
 
 void memcpy( void *dst, const void *src, size_t len ) {
 
@@ -16,8 +16,8 @@ void entry() {
 
     memcpy( (void*) ( IRAM_END - IROM_LEN + 1 ), (void*) IROM_BEGIN, IROM_LEN );
 
-    register do_normal_boot_t do_normal_boot = (do_normal_boot_t) ( BOOTROM_DO_BOOT | 1 );
-    do_normal_boot();
+    register do_bct_boot_t do_bct_boot = (do_bct_boot_t) ( BOOTROM_DO_BCT_BOOT | 1 );
+    do_bct_boot();
     while(1);
 
 }
