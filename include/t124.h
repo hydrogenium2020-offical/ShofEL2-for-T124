@@ -4,6 +4,9 @@
 #define JETSON_TK1_VID 0x0955
 #define JETSON_TK1_PID 0x7140
 
+#define SHIELD_TK1_VID 0x0955
+#define SHIELD_TK1_PID 0x7f40
+
 #define IROM_BEGIN              0x00100000
 #define IROM_END                0x0010FFFF
 #define IROM_LEN                0x00010000
