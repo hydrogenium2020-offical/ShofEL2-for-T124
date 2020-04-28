@@ -41,18 +41,17 @@ void entry() {
     ep1_x_imm_t ep1_in_write_imm = (ep1_x_imm_t) ( BOOTROM_EP1_IN_WRITE_IMM | 1 );
 
     ep1_out_read_imm( &args, sizeof(args), &num_xfer );
-
+    
     while ( args.len > 0 ) {
 
         to_send = args.len > 0x1000? 0x1000 : args.len;
-        args.start += to_send;
-        args.len -= to_send;
         
         memcpy( buffer, (void*)args.start, to_send );
         ep1_in_write_imm( buffer, to_send, &num_xfer );
 
+        args.start += to_send;
+        args.len -= to_send;
     }
-    
     enter_rcm();
 
 }
