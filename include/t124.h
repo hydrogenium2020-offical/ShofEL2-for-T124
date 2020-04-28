@@ -4,10 +4,15 @@
 #define JETSON_TK1_VID 0x0955
 #define JETSON_TK1_PID 0x7140
 
+#define IROM_BEGIN              0x00100000
+#define IROM_END                0x0010FFFF
+#define IROM_LEN                0x00010000
 
 #define IRAM_BEGIN              0x40000000
-#define IRAM_END                0x40040000
+#define IRAM_END                0x4003FFFF
+#define IRAM_LEN                0x00040000
 
+#define BOOTROM_DO_BOOT         0x00100624
 #define BOOTROM_USB_BUF_1       0x40004000
 #define BOOTROM_USB_BUF_2       0x40008000
 #define BOOTROM_PAYLOAD_ENTRY   0x4000E000

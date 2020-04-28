@@ -1,6 +1,8 @@
 CFLAGS := -Wall -Werror -I include -MMD
 
-all: shofel2_t124 reset_example.bin jtag_example.bin intermezzo.bin reset_long_bin_example.bin
+BIN_FILES = reset_example.bin jtag_example.bin intermezzo.bin reset_long_bin_example.bin irom_dumper.bin
+
+all: shofel2_t124 $(BIN_FILES)
 
 # --------- x86 ----------
 
@@ -46,16 +48,19 @@ OBJ_FILES_ARM := $(addprefix build/obj_arm/,$(notdir $(C_FILES_ARM:.c=.o)))
 build/obj_arm/%.o: payloads/%.c
 	$(CC_ARM) $(CFLAGS_ARM) -c -o $@ $<
 
-build/reset_example.elf: build/obj_arm/reset_example.o 
+build/reset_example.elf: build/obj_arm/reset_example.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
-build/reset_long_bin_example.elf: build/obj_arm/reset_long_bin_example.o 
+build/reset_long_bin_example.elf: build/obj_arm/reset_long_bin_example.o
 	$(CC_ARM) $(CFLAGS_ARM_LONG_BIN) -o $@ $^
 
-build/jtag_example.elf: build/obj_arm/jtag_example.o 
+build/jtag_example.elf: build/obj_arm/jtag_example.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
-build/intermezzo.elf: build/obj_arm/intermezzo.o 
+build/irom_dumper.elf: build/obj_arm/irom_dumper.o
+	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
+
+build/intermezzo.elf: build/obj_arm/intermezzo.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 %.bin: build/%.elf
@@ -66,5 +71,8 @@ build/intermezzo.elf: build/obj_arm/intermezzo.o
 
 clean:
 	rm -f $(OBJ_FILES_ARM) $(OBJ_FILES_x86)
-	rm -f shofel2_t124 reset_example.bin build/reset_example.elf jtag_example.bin build/jtag_example.elf intermezzo.bin build/intermezzo.elf reset_long_bin_example.bin build/reset_long_bin_example.elf
+	rm -f shofel2_t124 build/*.elf $(BIN_FILES)
+
+cleanall: clean
+	rm -f build/obj_arm/*.d build/obj_x86/*.d
 
