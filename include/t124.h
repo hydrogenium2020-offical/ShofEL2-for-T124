@@ -80,5 +80,8 @@
 #define SB_PFCFG_0		0x8
 #define DEBUG_ON		0x00C0008F
 
+#define FUSE_BASE   0x7000F900
+#define FUSE_LEN   0x300
+
 #endif
 
