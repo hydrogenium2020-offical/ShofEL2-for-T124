@@ -73,10 +73,14 @@
 #define SB_PFCFG_0		0x8
 #define DEBUG_ON		0x00C0008F
 
-
 #define APB_BASE	0x70000000
 #define APB_MISC_PP_CONFIG_CTL_0	0x24
 #define JTAG_ON				0xC0
+
+#define FLOW_CTLR_BASE  0x60007000
+#define FLOW_CTLR_HALT_COP_EVENTS_0  0x4
+#define FLOW_CTLR_HALT_COP_FLOW_MODE_WAITEVENT (1 << 30)
+#define FLOW_CTLR_HALT_COP_JTAG           (1 << 28)
 
 #define PMC_BASE               0x7000e400
 #define PMC_CNTRL              0x000
@@ -86,6 +90,7 @@
 
 #define FUSE_BASE   0x7000F900
 #define FUSE_LEN   0x300
+
 
 #endif
 
