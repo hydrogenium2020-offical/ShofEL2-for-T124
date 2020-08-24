@@ -70,12 +70,13 @@
 
 
 #define SECURE_BOOT_BASE	0x6000C200
-#define SB_PFCFG_0		0x8
-#define DEBUG_ON		0x00C0008F
+#define SB_PFCFG_0		    0x8
+#define JTAG_ON		        0x00000080
 
 #define APB_BASE	0x70000000
 #define APB_MISC_PP_CONFIG_CTL_0	0x24
-#define JTAG_ON				0xC0
+#define APB_MISC_PP_CONFIG_CTL_0_JTAG				0x40
+#define APB_MISC_PP_CONFIG_CTL_0_TBE 				0x80
 
 #define FLOW_CTLR_BASE  0x60007000
 #define FLOW_CTLR_HALT_COP_EVENTS_0  0x4
