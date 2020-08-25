@@ -16,15 +16,20 @@ static inline void or32(uintptr_t addr, u32 val) {
 __attribute__(( section(".init") ))
 void main() {
 
-    // TODO: THIS DOESN'T WORK
-    or32( APB_BASE + APB_MISC_PP_CONFIG_CTL_0, APB_MISC_PP_CONFIG_CTL_0_JTAG |
-                                               APB_MISC_PP_CONFIG_CTL_0_TBE );
     
+    u32 pirom_start_0 = 0x00010000;
+    write32( SECURE_BOOT_BASE + SB_PIROM_START_0, pirom_start_0 );
+
+    u32 sb_csr_0 = 0x00000010;
+    write32( SECURE_BOOT_BASE + SB_CSR_0, sb_csr_0 );
+
     u32 sb_pfcfg_0 = read32( SECURE_BOOT_BASE + SB_PFCFG_0 );
     sb_pfcfg_0 &= 0xfffffff0;
-    sb_pfcfg_0 |= 0x4;
+    sb_pfcfg_0 |= 0xf;
     write32( SECURE_BOOT_BASE + SB_PFCFG_0, sb_pfcfg_0 );
 
+    or32( APB_BASE + APB_MISC_PP_CONFIG_CTL_0, APB_MISC_PP_CONFIG_CTL_0_JTAG |
+                                               APB_MISC_PP_CONFIG_CTL_0_TBE );
     while(1) {
         // Halt COP and wait for JTAG
         or32( FLOW_CTLR_BASE + FLOW_CTLR_HALT_COP_EVENTS_0,

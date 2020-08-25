@@ -70,6 +70,8 @@
 
 
 #define SECURE_BOOT_BASE	0x6000C200
+#define SB_CSR_0            0x0
+#define SB_PIROM_START_0    0x4
 #define SB_PFCFG_0		    0x8
 #define JTAG_ON		        0x00000080
 
