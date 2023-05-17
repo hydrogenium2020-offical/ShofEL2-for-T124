@@ -15,5 +15,6 @@ typedef volatile u32 vu32;
 typedef volatile u64 vu64;
 typedef u32 size_t;
 typedef u32 uintptr_t;
+typedef void (*entry_point)(void);
 
 #endif
