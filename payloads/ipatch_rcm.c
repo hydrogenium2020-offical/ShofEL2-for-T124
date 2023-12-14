@@ -34,7 +34,8 @@ void ipatch_word(u8 slot, u32 addr, u16 new_value)
 
 __attribute__((section(".init")))
 void entry() {
-	ipatch_word(1, BOOTROM_GET_SECURITY_MODE, 0x2000);
+	ipatch_word(1, BOOTROM_IS_ODM_MODE, 0x2000);
+	ipatch_word(2, BOOTROM_GET_SECURITY_MODE, 0x2003);
 
 	register entry_point entry = (entry_point) ( 0x00101128 | 1 );
 	entry();
