@@ -24,6 +24,7 @@
 #define BOOTROM_SMASH_TARGET        0x4000DCD8
 #define BOOTROM_STACK_GAP_LEN           0x30C
 #define BOOTROM_SMASH_LEN           (BOOTROM_SMASH_TARGET - BOOTROM_USB_BUF_2) // 0x5CD8
+#define BOOTROM_GET_SECURITY_MODE	0x001002DA
 
 #define VARS_LEN 0x10
 
@@ -94,6 +95,10 @@
 #define FUSE_BASE   0x7000F900
 #define FUSE_LEN   0x300
 
+/* ipatch hardware */
+#define IPATCH_BASE					(0x6001dc00)
+#define IPATCH_SELECT				(0x0)
+#define IPATCH_REGS					(0x4)
 
 #endif
 

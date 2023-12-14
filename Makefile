@@ -50,6 +50,9 @@ build/mem_dumper_usb_server.elf: build/obj_arm/mem_dumper_usb_server.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 
+build/ipatch_rcm.elf: build/obj_arm/ipatch_rcm.o
+	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
+
 %.bin: build/%.elf
 	$(OBJCOPY_ARM) -O binary $< $@
 
