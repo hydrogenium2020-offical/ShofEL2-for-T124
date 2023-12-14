@@ -1,6 +1,6 @@
 CFLAGS := -Wall -Werror -I include -MMD
 
-BIN_FILES = reset_example.bin jtag_example.bin boot_bct.bin mem_dumper_usb_server.bin
+BIN_FILES = reset_example.bin jtag_example.bin boot_bct.bin mem_dumper_usb_server.bin ipatch_rcm.bin
 
 all: shofel2_t124 $(BIN_FILES)
 
