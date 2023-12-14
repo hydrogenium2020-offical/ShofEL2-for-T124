@@ -1,6 +1,6 @@
 CFLAGS := -Wall -Werror -I include -MMD
 
-BIN_FILES = reset_example.bin jtag_example.bin intermezzo.bin boot_bct.bin mem_dumper_usb_server.bin
+BIN_FILES = reset_example.bin jtag_example.bin boot_bct.bin mem_dumper_usb_server.bin
 
 all: shofel2_t124 $(BIN_FILES)
 
@@ -24,19 +24,14 @@ shofel2_t124: $(OBJ_FILES_x86)
 
 # ----- ARMv4t Thumb -----
 
-TOOLCHAIN_ARM ?= arm-unknown-eabi-
+TOOLCHAIN_ARM ?= arm-none-eabi-
 CC_ARM = $(TOOLCHAIN_ARM)gcc
 AS_ARM = $(TOOLCHAIN_ARM)as
 OBJCOPY_ARM = $(TOOLCHAIN_ARM)objcopy
 
-CFLAGS_ARM := $(CFLAGS) -march=armv4t -mthumb -Os -ffreestanding \
-	-fno-common	-fomit-frame-pointer -nostdlib -fno-builtin-printf \
-	-fno-asynchronous-unwind-tables -fPIE -fno-builtin -fno-exceptions \
-	-Wl,--no-dynamic-linker,--build-id=none,-T,payloads/payload.ld
 
-# shameless copypasta from https://stackoverflow.com/a/2908351/375416
-C_FILES_ARM := $(wildcard payloads/*.c)
-OBJ_FILES_ARM := $(addprefix build/obj_arm/,$(notdir $(C_FILES_ARM:.c=.o)))
+ARCH := -march=armv4t -mtune=arm7tdmi -mthumb -mthumb-interwork
+CFLAGS_ARM = $(ARCH) -O2 -nostdlib -ffunction-sections -fdata-sections -fomit-frame-pointer -fno-inline -std=gnu11 -T,payloads/payload.ld# -Wall
 -include $(OBJ_FILES_ARM:.o=.d)
 
 build/obj_arm/%.o: payloads/%.c
@@ -54,8 +49,6 @@ build/boot_bct.elf: build/obj_arm/boot_bct.o
 build/mem_dumper_usb_server.elf: build/obj_arm/mem_dumper_usb_server.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
-build/intermezzo.elf: build/obj_arm/intermezzo.o
-	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 %.bin: build/%.elf
 	$(OBJCOPY_ARM) -O binary $< $@
