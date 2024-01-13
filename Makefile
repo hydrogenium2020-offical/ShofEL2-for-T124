@@ -1,6 +1,6 @@
 CFLAGS := -Wall -Werror -I include -MMD
 
-BIN_FILES = reset_example.bin jtag_example.bin boot_bct.bin mem_dumper_usb_server.bin ipatch_rcm.bin
+BIN_FILES = reset_example.bin jtag_example.bin boot_bct.bin mem_dumper_usb_server.bin ipatch_rcm.bin intermezzo.bin
 
 all: shofel2_t124 $(BIN_FILES)
 
@@ -32,7 +32,7 @@ OBJCOPY_ARM = $(TOOLCHAIN_ARM)objcopy
 CFLAGS_ARM := $(CFLAGS) -march=armv4t -mthumb -Os -ffreestanding \
 	-fno-common	-fomit-frame-pointer -nostdlib -fno-builtin-printf \
 	-fno-asynchronous-unwind-tables -fPIE -fno-builtin -fno-exceptions \
-	-Wl,--no-dynamic-linker,--build-id=none,-T,payloads/payload.ld
+	-Wl,--no-dynamic-linker,--build-id=none,-T,payloads/payload.ld -Wno-array-bounds
 
 # shameless copypasta from https://stackoverflow.com/a/2908351/375416
 C_FILES_ARM := $(wildcard payloads/*.c)
@@ -46,6 +46,9 @@ build/reset_example.elf: build/obj_arm/reset_example.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 build/jtag_example.elf: build/obj_arm/jtag_example.o
+	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
+
+build/intermezzo.elf: build/obj_arm/intermezzo.o
 	$(CC_ARM) $(CFLAGS_ARM) -o $@ $^
 
 build/boot_bct.elf: build/obj_arm/boot_bct.o
